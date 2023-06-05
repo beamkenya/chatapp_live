@@ -37,12 +37,13 @@ defmodule ChatAppLiveWeb.ChatFormLive do
     """
   end
 
-  def handle_event("save", %{"message" => message_params}, socket)do
+  def handle_event("save", %{"message" => message_params}, socket) do
     case Messages.create_message(message_params) do
-      {:ok, _message} -> {:noreply, socket |> redirect(to: ~p"/compose/message")}
-      {:error, %Ecto.Changeset{} = changeset} -> {:noreply, assign(socket, form: to_form(changeset))}
+      {:ok, _message} ->
+        {:noreply, socket |> redirect(to: ~p"/compose/message")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
-
-
 end
