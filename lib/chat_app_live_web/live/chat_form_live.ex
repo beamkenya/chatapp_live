@@ -5,7 +5,8 @@ defmodule ChatAppLiveWeb.ChatFormLive do
   alias ChatAppLive.Messages.Message
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, form: to_form(Messages.change_message(%Message{})))}
+    messages = Messages.list_messages
+    {:ok, assign(socket, form: to_form(Messages.change_message(%Message{})), messages: messages)}
   end
 
   def render(assigns) do
@@ -34,13 +35,32 @@ defmodule ChatAppLiveWeb.ChatFormLive do
         </.form>
       </div>
     </div>
+
+
+
+    <h1>Messages</h1>
+
+    <table>
+
+      <tbody>
+      <%= for  message <- @messages do %>
+        <tr>
+
+          <td> <%= message.id %></td>
+          <td> <%= message.content %></td>
+
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
     """
   end
 
   def handle_event("save", %{"message" => message_params}, socket) do
     case Messages.create_message(message_params) do
+
       {:ok, _message} ->
-        {:noreply, socket |> redirect(to: ~p"/compose/message")}
+        {:noreply, assign(socket, push_navigate(socket, to: ~p"/compose/message"))}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}

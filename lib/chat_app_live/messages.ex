@@ -18,7 +18,8 @@ defmodule ChatAppLive.Messages do
 
   """
   def list_messages do
-    Repo.all(Message)
+    query = from m in Message, order_by: [desc: m.id]
+    Repo.all(query)
   end
 
   @doc """
