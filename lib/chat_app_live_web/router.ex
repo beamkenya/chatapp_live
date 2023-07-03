@@ -59,24 +59,19 @@ defmodule ChatAppLiveWeb.Router do
     end
 
     post "/users/log_in", UserSessionController, :create
-
   end
 
   scope "/", ChatAppLiveWeb do
     pipe_through [:browser, :require_authenticated_user]
 
-    live "/compose/message", ChatFormLive
+    live "/messages", ChatFormLive
     live "/message/:id", ChatShowLive
-
 
     live_session :require_authenticated_user,
       on_mount: [{ChatAppLiveWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
     end
-
-
-
   end
 
   scope "/", ChatAppLiveWeb do
