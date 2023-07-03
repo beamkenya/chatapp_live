@@ -2,7 +2,6 @@ defmodule ChatAppLiveWeb.ChatShowLive do
   use ChatAppLiveWeb, :live_view
 
   alias ChatAppLive.Messages
-  alias ChatAppLive.Messages.Message
 
   def mount(_params, _session, socket) do
     {:ok, socket}
