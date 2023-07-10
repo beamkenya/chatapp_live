@@ -9,6 +9,16 @@ defmodule ChatAppLiveWeb.ChatFormLive do
     {:ok, assign(socket, form: to_form(Messages.change_message(%Message{})), messages: messages)}
   end
 
+  def handle_event("save", %{"message" => message_params}, socket) do
+    case Messages.create_message(message_params) do
+      {:ok, _message} ->
+        {:noreply, assign(socket, push_patch(socket, to: ~p"/messages"))}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, form: to_form(changeset))}
+    end
+  end
+
   def render(assigns) do
     ~H"""
     <div class="flex items-start space-x-4">
@@ -37,13 +47,12 @@ defmodule ChatAppLiveWeb.ChatFormLive do
     </div>
 
     <div>
-        <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
-          Messages
-        </h1>
-      </div>
+      <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+        Messages
+      </h1>
+    </div>
 
     <div class="flex items-start space-y-10">
-
       <ul role="list" class="divide-y divide-gray-100">
         <%= for  message <- @messages do %>
           <li class="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5 sm:flex-nowrap">
@@ -98,15 +107,5 @@ defmodule ChatAppLiveWeb.ChatFormLive do
       </ul>
     </div>
     """
-  end
-
-  def handle_event("save", %{"message" => message_params}, socket) do
-    case Messages.create_message(message_params) do
-      {:ok, _message} ->
-        {:noreply, assign(socket, push_navigate(socket, to: ~p"/compose/message"))}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
-    end
   end
 end
