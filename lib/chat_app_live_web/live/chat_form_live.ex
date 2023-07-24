@@ -11,8 +11,8 @@ defmodule ChatAppLiveWeb.ChatFormLive do
 
   def handle_event("save", %{"message" => message_params}, socket) do
     case Messages.create_message(message_params) do
-      {:ok, _message} ->
-        {:noreply, assign(socket, push_patch(socket, to: ~p"/messages"))}
+      {:ok, message} ->
+        {:noreply, assign(socket, :messages, [message | socket.assigns.messages])}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
@@ -58,9 +58,9 @@ defmodule ChatAppLiveWeb.ChatFormLive do
           <li class="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5 sm:flex-nowrap">
             <div>
               <p class="text-sm font-semibold leading-6 text-gray-900">
-                <a href="#" class="hover:underline">
+                <.link navigate={~p"/message/#{message.id}"} class="hover:underline">
                   <%= message.content %>
-                </a>
+                </.link>
               </p>
               <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
                 <p>
