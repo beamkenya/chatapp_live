@@ -11,8 +11,8 @@ defmodule ChatAppLiveWeb.ChatFormLive do
 
   def handle_event("save", %{"message" => message_params}, socket) do
     case Messages.create_message(message_params) do
-      {:ok, _message} ->
-        {:noreply, assign(socket, push_patch(socket, to: ~p"/messages"))}
+      {:ok, message} ->
+        {:noreply, assign(socket, :messages, [message | socket.assigns.messages])}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
