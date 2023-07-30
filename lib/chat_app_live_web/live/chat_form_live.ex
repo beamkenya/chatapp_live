@@ -9,6 +9,13 @@ defmodule ChatAppLiveWeb.ChatFormLive do
     {:ok, assign(socket, form: to_form(Messages.change_message(%Message{})), messages: messages)}
   end
 
+  defp get_message!(message_id) do
+    case Repo.get(Message, message_id) do
+      nil -> {:error, "Message not found"}
+      message -> {:ok, message}
+    end
+  end
+
   def handle_event("save", %{"message" => message_params}, socket) do
     case Messages.create_message(message_params) do
       {:ok, _message} ->
@@ -77,6 +84,7 @@ defmodule ChatAppLiveWeb.ChatFormLive do
                 <a
                   href="#"
                   class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                  phx-click={show_modal("edit-form")}
                 >
                   Edit
                 </a>
@@ -106,6 +114,25 @@ defmodule ChatAppLiveWeb.ChatFormLive do
         <% end %>
       </ul>
     </div>
+
+    <ChatAppLiveWeb.CoreComponents.modal id="edit-form">
+    <h1>Edit Message</h1>
+    <.form for={@form} phx-submit="save">
+    <label for="comment" class="sr-only">Add your comment</label>
+    <.input type="textarea" field={@form[:content]} />
+
+
+
+    <div class="flex-shrink-0">
+      <button
+        type="submit"
+        class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+      >
+        Edit
+      </button>
+    </div>
+  </.form>
+  </ChatAppLiveWeb.CoreComponents.modal>
     """
   end
 end
