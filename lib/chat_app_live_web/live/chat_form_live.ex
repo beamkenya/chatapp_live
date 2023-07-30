@@ -9,6 +9,13 @@ defmodule ChatAppLiveWeb.ChatFormLive do
     {:ok, assign(socket, form: to_form(Messages.change_message(%Message{})), messages: messages)}
   end
 
+  defp get_message!(message_id) do
+    case Repo.get(Message, message_id) do
+      nil -> {:error, "Message not found"}
+      message -> {:ok, message}
+    end
+  end
+
   def handle_event("save", %{"message" => message_params}, socket) do
     case Messages.create_message(message_params) do
       {:ok, _message} ->
@@ -113,6 +120,7 @@ defmodule ChatAppLiveWeb.ChatFormLive do
     <.form for={@form} phx-submit="save">
     <label for="comment" class="sr-only">Add your comment</label>
     <.input type="textarea" field={@form[:content]} />
+
 
 
     <div class="flex-shrink-0">
